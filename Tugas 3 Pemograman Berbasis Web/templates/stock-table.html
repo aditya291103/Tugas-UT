@@ -1,0 +1,238 @@
+<script type="text/x-template" id="tpl-stock">
+<div>
+
+    <!-- FILTER AREA -->
+    <div class="card mb-3 p-3">
+        <div class="row g-2">
+
+            <!-- Filter UT -->
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">UT-Daerah</label>
+                <select class="form-select" v-model="filters.upbjj">
+                    <option value="">Semua</option>
+                    <option v-for="u in upbjjList" :key="u" :value="u">{{ u }}</option>
+                </select>
+            </div>
+
+            <!-- Filter Kategori -->
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Kategori</label>
+                <select class="form-select"
+                        v-model="filters.kategori"
+                        :disabled="!filters.upbjj">
+                    <option value="">Semua</option>
+                    <option v-for="k in kategoriOptions" :key="k" :value="k">{{ k }}</option>
+                </select>
+            </div>
+
+            <!-- Filter Stok -->
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Filter Stok (qty)</label>
+                <select class="form-select" v-model="filters.stockFlag">
+                    <option value="">Semua</option>
+                    <option value="belowSafety">Qty &lt; safety</option>
+                    <option value="zero">Qty = 0</option>
+                </select>
+            </div>
+
+            <!-- Sort -->
+            <div class="col-md-3">
+                <label class="form-label fw-semibold">Sort By</label>
+                <select class="form-select" v-model="sortBy">
+                    <option value="">Default</option>
+                    <option value="judul">Judul (A→Z)</option>
+                    <option value="qty_desc">Stok qty (terbanyak)</option>
+                    <option value="qty_asc">Stok qty (tersedikit)</option>
+                    <option value="harga_desc">Harga (tertinggi)</option>
+                    <option value="harga_asc">Harga (terendah)</option>
+                </select>
+            </div>
+
+            <!-- Buttons -->
+            <div class="col-12 text-end mt-2">
+                <button class="btn btn-sm btn-secondary me-2"
+                        @click="resetFilters()">
+                    Reset Filter
+                </button>
+                <button class="btn btn-sm btn-primary"
+                        @click="openAdd()">
+                    Tambah
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- TABEL STOK -->
+    <div class="table-responsive card">
+        <table class="table table-hover mb-0 align-middle">
+            <thead class="table-primary text-center">
+                <tr>
+                    <th>Kode</th>
+                    <th>Judul</th>
+                    <th>Kategori</th>
+                    <th>UPBJJ</th>
+                    <th>Lokasi Rak</th>
+                    <th>Harga</th>
+                    <th>Qty</th>
+                    <th>Safety</th>
+                    <th>Status</th>
+                    <th style="width:80px;">Aksi</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr v-for="(row, idx) in displayed" :key="row.kode">
+                    <td class="text-center">{{ row.kode }}</td>
+                    <td class="text-center">{{ row.judul }}</td>
+                    <td class="text-center">{{ row.kategori }}</td>
+                    <td class="text-center">{{ row.upbjj }}</td>
+                    <td class="text-center">{{ row.lokasiRak }}</td>
+                    <td class="text-center">Rp {{ row.harga.toLocaleString('id-ID') }}</td>
+                    <td class="text-center">{{ row.qty }} buah</td>
+                    <td class="text-center">{{ row.safety }} buah</td>
+                    <td class="text-center">
+                        <status-badge :qty="row.qty"
+                                      :safety="row.safety"
+                                      :catatanHTML="row.catatanHTML"></status-badge>
+                    </td>
+                    <td>
+                        <button class="btn btn-outline-primary btn-sm me-1"
+                                @click="openEdit(idx)">
+                            Edit
+                        </button>
+                        <button class="btn btn-outline-danger btn-sm"
+                                @click="askDelete(idx)">
+                            Hapus
+                        </button>
+                    </td>
+                </tr>
+
+                <tr v-if="displayed.length === 0">
+                    <td colspan="11" class="text-center py-3 text-muted">
+                        Tidak ada data.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal Add/Edit -->
+    <app-modal
+        v-if="modalOpen"
+        :title="editIndex===null?'Tambah Bahan Ajar':'Edit Bahan Ajar'"
+        :action="editIndex===null?'Tambah':'Simpan'"
+        @confirm="saveItem"
+        @close="closeModal">
+
+        <div class="row g-2">
+
+            <div class="col-md-4">
+                <label class="form-label required">Kode</label>
+                <input class="form-control"
+                       placeholder="Masukkan kode"
+                       v-model="form.kode"
+                       :readonly="editIndex!==null"
+                       required>
+            </div>
+
+            <div class="col-md-8">
+                <label class="form-label required">Judul</label>
+                <input class="form-control"
+                       placeholder="Masukkan judul"
+                       v-model="form.judul"
+                       required>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label required">Kategori</label>
+                <select class="form-select"
+                        v-model="form.kategori" required>
+                    <option disabled value="">-- pilih kategori --</option>
+                    <option v-for="k in kategoriList"
+                            :key="k"
+                            :value="k">
+                        {{ k }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label required">UPBJJ</label>
+                <select class="form-select"
+                        v-model="form.upbjj" required>
+                    <option disabled value="">Pilih upbjj</option>
+                    <option v-for="u in upbjjList"
+                            :key="u"
+                            :value="u">
+                        {{ u }}
+                    </option>
+                </select>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label required">Lokasi Rak</label>
+                <input class="form-control"
+                       placeholder="Contoh: R1-A3"
+                       v-model="form.lokasiRak"
+                       required>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label required">Harga</label>
+                <input type="number"
+                       class="form-control"
+                       placeholder="Masukkan harga"
+                       v-model.number="form.harga"
+                       min="0"
+                       required>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label required">Qty</label>
+                <input type="number"
+                       class="form-control"
+                       placeholder="Masukkan qty"
+                       v-model.number="form.qty"
+                       min="0"
+                       required>
+            </div>
+
+            <div class="col-md-4">
+                <label class="form-label required">Safety</label>
+                <input type="number"
+                       class="form-control"
+                       placeholder="Masukkan safety"
+                       v-model.number="form.safety"
+                       min="0"
+                       required>
+            </div>
+
+            <div class="col-12">
+                <label class="form-label">Catatan</label>
+                <textarea class="form-control"
+                          rows="2"
+                          placeholder="Masukkan catatan (opsional)"
+                          v-model="form.catatanHTML"></textarea>
+            </div>
+
+        </div>
+    </app-modal>
+
+    <!-- Modal Delete Confirmation -->
+    <app-modal
+        v-if="deleteConfirmOpen"
+        title="Konfirmasi Hapus"
+        action="Hapus"
+        @confirm="confirmDelete"
+        @close="closeDelete">
+
+        <p class="text-center fs-6">
+            Apakah Anda yakin ingin menghapus:
+            <strong>{{ form.kode }} - {{ form.judul }}</strong> ?
+        </p>
+
+    </app-modal>
+
+</div>
+</script>

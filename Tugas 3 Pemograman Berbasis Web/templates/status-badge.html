@@ -1,0 +1,9 @@
+<script type="text/x-template" id="tpl-status">
+<span class="badge"
+      :class="{
+        'bg-success': status === 'Aman',
+        'bg-warning text-dark': status === 'Menipis',
+        'bg-danger': status === 'Kosong'
+      }"
+      v-html="text"></span>
+</script>

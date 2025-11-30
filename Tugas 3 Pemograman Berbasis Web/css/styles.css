@@ -1,0 +1,71 @@
+/* Helper umum */
+/* .max-420 { max-width: 420px; } */
+
+
+/* Warna text placeholder */
+input::placeholder,
+textarea::placeholder {
+  color: rgba(0, 0, 0, 0.35) !important;
+  opacity: 1 !important;
+}
+
+.clickable-cover:hover {
+  transform: scale(1.1);
+}
+
+/* form requireq */
+label.required::after {
+  content: " *";
+  color: #d93025; 
+  font-weight: bold;
+}
+
+/* hover menu */
+.navbar-nav .nav-link:hover {
+  background-color: rgba(10, 61, 145, 0.1);
+  color: #0a3d91 !important;
+}
+
+/* Dashboard page*/
+.dashboard-card {
+  border: 2px solid #0a3d91;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-card .card-body {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+#greeting {
+  font-weight: 600;
+  font-size: 1.6rem;
+  color: #2464ca;
+  margin-bottom: 0.5rem;
+}
+
+#datetime {
+  font-size: 0.95rem;
+  color: #161414;
+}
+
+/* Tracking page */
+.card-do-list {
+  border: 2px solid #dce9ff;
+  background: #f5f9ff;
+  border-radius: 10px;
+}
+
+.card-do-item {
+  border: 1px solid #c2d6ff;
+  background: #ffffff;
+  border-left: 5px solid #0a58ca;
+  border-radius: 6px;
+  padding: 8px;
+}
+
+.card-do-item:hover {
+  background: #eef4ff;
+}
+

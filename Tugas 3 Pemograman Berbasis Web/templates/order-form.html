@@ -1,0 +1,86 @@
+<script type="text/x-template" id="tpl-order-form">
+<form class="card shadow-sm p-4 needs-validation"
+      novalidate
+      @submit.prevent="submitOrder">
+
+    <!-- ⚙️ Nomor DO (Auto) -->
+    <div class="mb-3">
+        <label class="fw-semibold">Nomor DO</label>
+        <input type="text" class="form-control" v-model="form.no" readonly>
+    </div>
+
+    <!-- 👤 Data Mahasiswa -->
+    <div class="row g-3 mb-3">
+        <div class="col-md-6">
+            <label class="fw-semibold required">NIM</label>
+            <input type="number" class="form-control"
+                v-model.trim="form.nim"
+                required
+                placeholder="Masukkan NIM">
+        </div>
+
+        <div class="col-md-6">
+            <label class="fw-semibold required">Nama</label>
+            <input type="text" class="form-control"
+                v-model.trim="form.nama"
+                required
+                placeholder="Masukkan Nama">
+        </div>
+    </div>
+
+    <!-- 🚚 Ekspedisi -->
+    <div class="mb-3">
+        <label class="fw-semibold required">Ekspedisi</label>
+        <select class="form-select" v-model="form.ekspedisi" required>
+            <option value="" disabled>Pilih Ekspedisi</option>
+            <option v-for="e in pengirimanList" :value="e">{{ e }}</option>
+        </select>
+    </div>
+
+    <!-- 📦 Paket -->
+    <div class="mb-3">
+        <label class="fw-semibold required">Paket Bahan Ajar</label>
+        <select class="form-select"
+                v-model="form.paket"
+                @change="updatePaketDetail"
+                required>
+            <option value="" disabled>Pilih Paket</option>
+            <option v-for="p in paket" :value="p.kode">
+                {{ p.kode }} - {{ p.nama }}
+            </option>
+        </select>
+    </div>
+
+    <!-- Detail Paket -->
+    <div v-if="detailPaket" class="alert alert-info small">
+        <strong>{{ detailPaket.kode }} - {{ detailPaket.nama }}</strong><br>
+        Harga: <strong>Rp {{ formatRupiah(detailPaket.harga) }}</strong><br>
+        Isi Paket:
+        <ul class="mb-0">
+            <li v-for="b in detailPaket.isi">{{ b }}</li>
+        </ul>
+    </div>
+
+    <!-- 📅 Tanggal -->
+    <div class="mb-3">
+        <label class="fw-semibold required">Tanggal Kirim</label>
+        <input type="date" class="form-control"
+               v-model="form.tanggalKirim"
+               required>
+    </div>
+
+    <!-- 💰 Total Harga -->
+    <div class="mb-3">
+        <label class="fw-semibold">Total Harga</label>
+        <input type="text" class="form-control"
+               :value="'Rp ' + formatRupiah(form.total)"
+               readonly>
+    </div>
+
+    <button type="submit"
+            class="btn btn-primary w-100 fw-bold py-2">
+        Tambah Delivery Order
+    </button>
+
+</form>
+</script>
