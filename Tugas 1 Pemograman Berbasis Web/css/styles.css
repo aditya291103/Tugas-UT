@@ -1,0 +1,72 @@
+/* Helper umum */
+/* .max-420 { max-width: 420px; } */
+
+
+/* Warna text placeholder */
+input::placeholder,
+textarea::placeholder {
+  color: rgba(0, 0, 0, 0.35) !important;
+  opacity: 1 !important;
+}
+
+/* Gambar cover kecil (stok) */
+.cover-44 { width:44px; height:44px; object-fit:cover; border-radius:.25rem; }
+
+/* Preview cover (stok) */
+.clickable-cover {
+  cursor: pointer;
+  transition: transform 0.15s ease-in-out;
+}
+
+.clickable-cover:hover {
+  transform: scale(1.1);
+}
+
+/* form requireq */
+label.required::after {
+  content: " *";
+  color: #d93025; 
+  font-weight: bold;
+}
+
+/* hover menu */
+.navbar-nav .nav-link:hover {
+  background-color: rgba(10, 61, 145, 0.1);
+  color: #0a3d91 !important;
+}
+
+/* Dashboard page*/
+.dashboard-card {
+  border: 2px solid #0a3d91;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+}
+
+.dashboard-card .card-body {
+  text-align: center;
+  padding: 2rem 1rem;
+}
+
+#greeting {
+  font-weight: 600;
+  font-size: 1.6rem;
+  color: #2464ca;
+  margin-bottom: 0.5rem;
+}
+
+#datetime {
+  font-size: 0.95rem;
+  color: #161414;
+}
+
+
+/* Tracking page*/
+.tracking-card {
+  border-radius: 12px;
+  border: 1.5px solid #0a3d91;
+}
+/* button search */
+.btn-primary {
+  background-color: #0a3d91;
+  border-color: #0a3d91;
+}

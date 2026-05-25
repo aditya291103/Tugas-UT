@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Tracking Pengiriman</title>
+	<link rel="icon" type="image/png" href="assets/logo-UT.png">
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+	<div id="navbar"></div>
+	<div id="app-trk" class="container my-4">
+		<h1 class="h4 text-primary mb-3">Tracking Delivery Order (DO)</h1>
+
+		<div class="card mb-3 p-3">
+			<form @submit.prevent="addDO">
+				<div class="row g-2">
+					<div class="col-md-3">
+						<label class="form-label">Nomor DO (auto)</label>
+						<input class="form-control" :value="nextDONo" readonly>
+					</div>
+					<div class="col-md-3">
+						<label class="form-label required">NIM</label>
+						<input type="number" class="form-control" v-model.number="form.nim" placeholder="Masukkan NIM"
+							min="0" required>
+					</div>
+					<div class="col-md-3">
+						<label class="form-label required">Nama</label>
+						<input v-model.trim="form.nama" class="form-control" required placeholder="Masukkan nama">
+					</div>
+					<div class="col-md-3">
+						<label class="form-label required">Ekspedisi</label>
+						<select v-model="form.ekspedisi" class="form-select" required>
+							<option disabled value="">Pilih ekspedisi</option>
+							<option v-for="p in pengirimanList" :value="p.kode" :key="p.kode">{{ p.nama }}</option>
+						</select>
+					</div>
+
+					<div class="col-md-4">
+						<label class="form-label required">Paket Bahan Ajar</label>
+						<select v-model="form.paket" class="form-select" required>
+							<option value="" disabled selected>Pilih paket</option>
+							<option v-for="p in paket" :value="p.kode" :key="p.kode">{{ p.kode }} — {{ p.nama }}
+							</option>
+						</select>
+					</div>
+					<div class="col-md-4">
+						<label class="form-label">Tanggal Kirim</label>
+						<input type="date" v-model="form.tanggalKirim" class="form-control">
+					</div>
+					<div class="col-md-4">
+						<label class="form-label">Total Harga (auto)</label>
+						<input class="form-control"
+							:value="selectedPaket ? selectedPaket.harga.toLocaleString('id-ID') : ''"
+							placeholder="Harga otomatis" readonly>
+					</div>
+
+					<div class="col-12 text-end mt-2">
+						<button class="btn btn-primary">Tambah DO</button>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<!-- paket detail -->
+		<div v-if="selectedPaket" class="card mb-3">
+			<div class="card-body">
+				<h6 class="fw-semibold">Detail Paket: {{ selectedPaket.kode }} — {{ selectedPaket.nama }}</h6>
+				<div>Isi paket: <span v-for="(it,i) in selectedPaket.isi" :key="i"
+						class="badge bg-light text-dark me-1">{{ it }}</span></div>
+				<div class="mt-2">Harga: Rp {{ selectedPaket.harga.toLocaleString('id-ID') }}</div>
+			</div>
+		</div>
+
+		<!-- daftar DO -->
+		<div class="card card-do-list mt-4">
+			<div class="card-body">
+				<h6 class="mb-3 fw-bold text-primary">Daftar Delivery Order</h6>
+				<div v-if="Object.keys(tracking).length === 0" class="text-muted">Belum ada DO</div>
+				<div v-else>
+					<div v-for="(d,code) in tracking" :key="code" class="mb-3 card-do-item">
+						<div class="d-flex justify-content-between">
+							<div><strong>{{ code }}</strong> — {{ d.nama }} ({{ d.nim }})</div>
+							<div><span class="badge" :class="statusClass(d)">{{ d.status }}</span></div>
+						</div>
+						<div class="small text-muted">
+							Ekspedisi: {{ d.ekspedisi }} •
+							Tgl Kirim: {{ d.tanggalKirim }} •
+							Total: Rp {{ d.total.toLocaleString('id-ID') }}
+						</div>
+						<div class="mt-2">
+							<strong>Riwayat Perjalanan:</strong>
+							<ul class="mb-0">
+								<li v-for="p in d.perjalanan" :key="p.waktu">{{ p.waktu }} — {{ p.keterangan }}</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+	</div>
+
+	<div id="toastSuccess" class="toast align-items-center text-bg-success border-0 position-fixed bottom-0 end-0 m-4"
+		role="alert" aria-live="assertive" aria-atomic="true">
+		<div class="d-flex">
+			<div class="toast-body fw-semibold">
+				✔ Berhasil!
+			</div>
+			<button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+				aria-label="Close"></button>
+		</div>
+	</div>
+
+	<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+	<script src="js/dataBahanAjar.js"></script>
+	<script src="js/tracking-app.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+	<script>
+		function showToastSuccess(msg) {
+			const toastEl = document.getElementById('toastSuccess');
+			toastEl.querySelector('.toast-body').textContent = msg;
+			const t = new bootstrap.Toast(toastEl, { delay: 2000 });
+			t.show();
+		}
+	</script>
+
+	<script>
+		// ===== PROTEKSI HALAMAN =====
+		// Mengecek apakah user sudah login dengan memeriksa sessionStorage
+		// Jika belum login, redirect ke halaman index.html
+		const currentUser = JSON.parse(sessionStorage.getItem('currentUser'));
+		if (!currentUser) window.location.href = 'index.html';
+
+		// ===== LOAD NAVBAR =====
+		// Mengambil navbar dari file terpisah dan menampilkan nama user yang sedang login
+		fetch('partials/navbar.html').then(r => r.text()).then(html => {
+			document.getElementById('navbar').innerHTML = html;
+			const el = document.getElementById('userName');
+			if (el) el.textContent = currentUser.nama;
+		});
+
+		// ===== FUNGSI LOGOUT =====
+		/**
+		 * Fungsi untuk logout user
+		 * Menghapus data user dari sessionStorage dan redirect ke halaman login
+		 */
+		function logout() {
+			sessionStorage.removeItem('currentUser');
+			window.location.href = 'index.html';
+		}
+		window.logout = logout;
+	</script>
+</body>
+
+</html>
