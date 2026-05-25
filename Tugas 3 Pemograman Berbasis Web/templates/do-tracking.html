@@ -1,0 +1,172 @@
+<script type="text/x-template" id="tpl-tracking">
+<div>
+
+    <!-- 🔎 FORM SEARCH -->
+    <div class="card p-3 shadow-sm mb-3">
+        <div class="row g-2">
+            <div class="col-md-6">
+                <input class="form-control"
+                    v-model.trim="query"
+                    @keyup.enter="searchDO"
+                    @keyup.esc="resetSearch"
+                    placeholder="Masukkan Nomor DO atau NIM">
+            </div>
+            <div class="col-md-6">
+                <button class="btn btn-primary w-100" @click="searchDO">
+                    Cari
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ❌ Tidak ditemukan -->
+    <div v-if="notFound" class="alert alert-warning">
+        ⚠️ Data tidak ditemukan!
+    </div>
+
+    <button class="btn btn-success mb-3"
+        @click="$root.setTab('order')">
+    + Tambah DO Baru
+</button>
+
+
+    <!-- 📌 Tabel DO -->
+<div v-if="resultList.length > 0" class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0 align-middle text-center">
+            <thead class="table-primary">
+                <tr>
+                    <th style="width:150px;">Nomor DO</th>
+                    <th style="width:120px;">NIM</th>
+                    <th style="width:200px;">Nama</th>
+                    <th style="width:140px;">Ekspedisi</th>
+                    <th style="width:120px;">Total</th>
+                    <th style="width:90px;">Aksi</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr v-for="r in resultList" :key="r.no">
+                    <td class="fw-semibold">{{ r.no }}</td>
+                    <td>{{ r.nim }}</td>
+                    <td>{{ r.nama }}</td>
+                    <td>{{ r.ekspedisi }}</td>
+                    <td>Rp {{ formatRupiah(r.total) }}</td>
+
+                    <td>
+                        <button class="btn btn-sm btn-outline-primary"
+                            @click="openDetail(r.no)">
+                            Detail
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Modal Detail DO -->
+<app-modal v-if="modalDetail"
+    title="Detail Delivery Order"
+    action="Tutup"
+    @confirm="closeDetail"
+    @close="closeDetail"
+>
+    <div v-if="selected">
+
+        <!-- Info Utama DO -->
+        <table class="table mb-3 table-bordered small">
+            <tbody>
+                <tr>
+                    <td class="fw-semibold">Nomor DO</td>
+                    <td class="text-end">{{ selected.no }}</td>
+                </tr>
+                <tr>
+                    <td class="fw-semibold">NIM</td>
+                    <td class="text-end">{{ selected.nim }}</td>
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Nama</td>
+                    <td class="text-end">{{ selected.nama }}</td>
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Ekspedisi</td>
+                    <td class="text-end">{{ selected.ekspedisi }}</td>
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Tanggal Kirim</td>
+                    <td class="text-end">{{ formatTanggal(selected.tanggalKirim) }}</td>
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Kode Paket</td>
+                    <td class="text-end">{{ selected.paket }}</td>
+                </tr>
+                <tr>
+                    <td class="fw-semibold">Total Harga</td>
+                    <td class="text-end">Rp {{ formatRupiah(selected.total) }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Status Perjalanan DO -->
+<h6 class="text-primary mb-2 fw-semibold">Riwayat Perjalanan</h6>
+
+<div class="table-responsive">
+  <table class="table table-striped table-sm align-middle small" style="table-layout:fixed;">
+    <thead class="table-light">
+  <tr>
+    <th class="text-center" style="width:180px; white-space:nowrap;">Waktu</th>
+    <th class="text-center" style="width:140px;">Status</th>
+    <th class="text-start">Keterangan</th>
+  </tr>
+</thead>
+
+<tbody>
+  <tr v-if="!selected.perjalanan || selected.perjalanan.length === 0">
+    <td colspan="3" class="text-center text-muted py-3">
+      Belum ada status perjalanan.
+    </td>
+  </tr>
+
+  <tr v-for="(p, i) in selected.perjalanan" :key="i">
+    <td class="text-center text-nowrap">{{ p.waktu }}</td>
+    <td class="text-center">{{ p.status || '-' }}</td>
+    <td class="text-start">{{ p.keterangan }}</td>
+  </tr>
+</tbody>
+  </table>
+</div>
+        <div class="text-end">
+            <button class="btn btn-sm btn-outline-success"
+                    @click="openAddStatus">
+                + Tambah Status
+            </button>
+        </div>
+
+    </div>
+</app-modal>
+
+    <!-- 📝 Modal Tambah Status -->
+    <app-modal v-if="modalStatus"
+    title="Tambah Status Pengiriman"
+    action="Simpan"
+    @confirm="saveStatus"
+    @close="closeStatus"
+>
+    <div class="mb-2">
+        <label class="form-label fw-semibold required">Status</label>
+        <input type="text" class="form-control"
+            v-model.trim="formStatus.status"
+            placeholder="Contoh: Sedang Diantar" required>
+    </div>
+
+    <div>
+        <label class="form-label fw-semibold required">Keterangan</label>
+        <textarea class="form-control"
+            v-model.trim="formStatus.keterangan"
+            placeholder="Masukkan keterangan..." rows="3" required></textarea>
+    </div>
+</app-modal>
+
+</div>
+</script>
