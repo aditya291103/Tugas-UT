@@ -45,7 +45,7 @@ Vue.component('ba-stock-table', {
   computed: {
     kategoriOptions() {
       if (!this.filters.upbjj) return this.kategoriList;
-      
+
       const set = new Set();
       this.localStok.forEach(s => {
         if (s.upbjj === this.filters.upbjj) {
@@ -109,25 +109,33 @@ Vue.component('ba-stock-table', {
       this.modalOpen = true;
     },
 
-    openEdit(i) {
-      this.editIndex = i;
-      this.form = JSON.parse(JSON.stringify(this.localStok[i]));
+    openEdit(row) {
+      const index = this.localStok.findIndex(
+        s => s.kode === row.kode
+      );
+
+      this.editIndex = index;
+      this.form = JSON.parse(JSON.stringify(row));
       this.modalOpen = true;
     },
 
-    askDelete(i) {
-      this.deleteIndex = i;
-      this.form = JSON.parse(JSON.stringify(this.localStok[i]));
+    askDelete(row) {
+      const index = this.localStok.findIndex(
+        s => s.kode === row.kode
+      );
+
+      this.deleteIndex = index;
+      this.form = JSON.parse(JSON.stringify(row));
       this.deleteConfirmOpen = true;
     },
 
     confirmDelete() {
-  if (this.deleteIndex !== null) {
-    this.$emit("delete-stok", this.deleteIndex);
-    showToastSuccess("Data berhasil dihapus ✔");
-  }
-  this.closeDelete();
-},
+      if (this.deleteIndex !== null) {
+        this.$emit("delete-stok", this.deleteIndex);
+        showToastSuccess("Data berhasil dihapus ✔");
+      }
+      this.closeDelete();
+    },
 
     closeDelete() {
       this.deleteConfirmOpen = false;
@@ -136,13 +144,13 @@ Vue.component('ba-stock-table', {
 
     saveItem() {
       if (!this.form.kode ||
-          !this.form.judul ||
-          !this.form.kategori ||
-          !this.form.upbjj ||
-          !this.form.lokasiRak ||
-          this.form.harga === '' ||
-          this.form.qty === '' ||
-          this.form.safety === '') {
+        !this.form.judul ||
+        !this.form.kategori ||
+        !this.form.upbjj ||
+        !this.form.lokasiRak ||
+        this.form.harga === '' ||
+        this.form.qty === '' ||
+        this.form.safety === '') {
         alert("Semua field required wajib diisi!");
         return;
       }

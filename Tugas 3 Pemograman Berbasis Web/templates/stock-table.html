@@ -82,7 +82,7 @@
             </thead>
 
             <tbody>
-                <tr v-for="(row, idx) in displayed" :key="row.kode">
+                    <tr v-for="row in displayed" :key="row.kode">
                     <td class="text-center">{{ row.kode }}</td>
                     <td class="text-center">{{ row.judul }}</td>
                     <td class="text-center">{{ row.kategori }}</td>
@@ -97,12 +97,15 @@
                                       :catatanHTML="row.catatanHTML"></status-badge>
                     </td>
                     <td>
-                        <button class="btn btn-outline-primary btn-sm me-1"
-                                @click="openEdit(idx)">
+                        <button type="button" 
+                                class="btn btn-outline-primary btn-sm me-1"
+                                @click="openEdit(row)">
                             Edit
                         </button>
-                        <button class="btn btn-outline-danger btn-sm"
-                                @click="askDelete(idx)">
+
+                        <button type="button" 
+                                class="btn btn-outline-danger btn-sm"
+                                @click="askDelete(row)">
                             Hapus
                         </button>
                     </td>

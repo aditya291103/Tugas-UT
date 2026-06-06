@@ -6,7 +6,7 @@
     <!-- ⚙️ Nomor DO (Auto) -->
     <div class="mb-3">
         <label class="fw-semibold">Nomor DO</label>
-        <input type="text" class="form-control" v-model="form.no" readonly>
+        <input type="text" class="form-control bg-light text-muted" v-model="form.no" readonly>
     </div>
 
     <!-- 👤 Data Mahasiswa -->
@@ -72,7 +72,7 @@
     <!-- 💰 Total Harga -->
     <div class="mb-3">
         <label class="fw-semibold">Total Harga</label>
-        <input type="text" class="form-control"
+        <input type="text" class="form-control bg-light text-muted"
                :value="'Rp ' + formatRupiah(form.total)"
                readonly>
     </div>

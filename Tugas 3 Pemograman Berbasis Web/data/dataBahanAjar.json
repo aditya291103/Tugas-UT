@@ -110,15 +110,15 @@
             "DO2025-0002": {
                 "nim": "123456789",
                 "nama": "Rina Wulandari",
-                "status": "Dalam Perjalanan",
+                "status": "Diterima",
                 "ekspedisi": "JNE",
-                "tanggalKirim": "2025-08-25",
+                "tanggalKirim": "2024-07-25",
                 "paket": "PAKET-UT-001",
                 "total": 120000,
                 "perjalanan": [
                     {
-                        "waktu": "2025-08-25 10:12:20",
-                        "keterangan": "Penerimaan di Loket: TANGSEL"
+                        "waktu": "2024-08-01 10:12:20",
+                        "keterangan": "Paket Telah Terkirim"
                     }
                 ]
             }

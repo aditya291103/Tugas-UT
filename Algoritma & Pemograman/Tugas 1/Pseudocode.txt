@@ -1,0 +1,36 @@
+MULAI
+
+    INPUT golongan A
+    INPUT jamLembur 2
+
+    IF golongan = "A" THEN
+        gajiPokok = 5000000
+    ELSE IF golongan = "B" THEN
+        gajiPokok = 6500000
+    ELSE IF golongan = "C" THEN
+        gajiPokok = 9500000
+    ELSE
+        PRINT "Golongan tidak valid"
+        STOP
+    END IF
+
+    IF jamLembur = 1 THEN
+        persentase = 0.30
+    ELSE IF jamLembur = 2 THEN
+        persentase = 0.32
+    ELSE IF jamLembur = 3 THEN
+        persentase = 0.34
+    ELSE IF jamLembur = 4 THEN
+        persentase = 0.36
+    ELSE IF jamLembur >= 5 THEN
+        persentase = 0.38
+    ELSE
+        PRINT "Jam lembur tidak valid"
+        STOP
+    END IF
+
+    gajiLembur = gajiPokok * persentase
+    jumlahPenghasilan = gajiPokok + gajiLembur
+
+    PRINT "Jumlah Penghasilan: Rp " + jumlahPenghasilan
+SELESAI
