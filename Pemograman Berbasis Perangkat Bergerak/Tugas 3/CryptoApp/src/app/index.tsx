@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "#f2f2f2",
     padding: 10,
-    paddingTop: 60,
   },
 
   title: {
@@ -69,13 +68,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     marginVertical: 15,
-    color: "#1f236e"
+    color: "#1f3c88",
   },
 
   card: {
-    backgroundColor: "#ebecca",
+    backgroundColor: "#f5edc8",
     borderWidth: 1,
-    borderColor: "#cdbb78",
+    borderColor: "#d7c37d",
     padding: 12,
     marginBottom: 8,
     borderRadius: 6,
@@ -93,7 +92,7 @@ const styles = StyleSheet.create({
 
   label: {
     fontSize: 12,
-    color: "#636161",
+    color: "#555",
   },
 
   value: {
