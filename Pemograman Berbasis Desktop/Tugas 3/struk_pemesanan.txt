@@ -1,0 +1,14 @@
+
+=================================
+          STRUK PESANAN          
+=================================
+Soto Ayam       x2     Rp20000,00
+Soto Sapi       x3     Rp36000,00
+Es Teh          x2     Rp8000,00
+Es Jeruk        x3     Rp15000,00
+Diskon 6.6      x1     (Promo)        
+---------------------------------
+Subtotal:     Rp79000,00
+Total Diskon: 10%
+Total Bayar:  Rp71100,00
+=================================
